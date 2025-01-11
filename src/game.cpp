@@ -6,20 +6,9 @@ Game::Game() {
   blocks = GetBlocks();
   currentBlock = GetRandomBlock();
   nextBlock = GetRandomBlock();
-
-  /* blocks.push_back(LBlock());
-  blocks.push_back(JBlock());
-  blocks.push_back(IBlock());
-  blocks.push_back(OBlock());
-  blocks.push_back(SBlock()); */
 }
 
 Block Game::GetRandomBlock() {
-  /* std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<> dis(0, blocks.size() - 1);
-  return blocks[dis(gen)]; */
-
   if(blocks.empty()) {
     blocks = GetBlocks();
   }
@@ -34,18 +23,85 @@ std::vector<Block> Game::GetBlocks() {
   return {IBlock(), JBlock(), LBlock(), OBlock(), SBlock(), TBlock(), ZBlock()};
 }
 
-/* void Game::Update() {
-  currentBlock.Move(1, 0);
+void Game::Update() {
+  currentBlock.Move(0, 1);
   if(CheckCollision()) {
-    currentBlock.Move(-1, 0);
+    currentBlock.Move(0, -1);
     MergeBlock();
     currentBlock = nextBlock;
     nextBlock = GetRandomBlock();
   }
-} */
+}
 
 void Game::Draw() {
   grid.Draw();
   currentBlock.Draw();
   //nextBlock.Draw();
+}
+
+bool Game::CheckCollision() {
+  std::vector<Position> currentShape = currentBlock.GetCellPositions();
+  for(Position item : currentShape) {
+    if(item.x < 0 || item.x >= grid.GetWidth() || item.y >= grid.GetHeight() || grid.GetCell(item.x, item.y) != 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void Game::HandleInput() {
+  if(IsKeyPressed(KEY_LEFT)) {
+    currentBlock.Move(-1, 0);
+    if(CheckCollision()) {
+      currentBlock.Move(1, 0);
+    }
+  }
+  if(IsKeyPressed(KEY_RIGHT)) {
+    currentBlock.Move(1, 0);
+    if(CheckCollision()) {
+      currentBlock.Move(-1, 0);
+    }
+  }
+  if(IsKeyPressed(KEY_DOWN)) {
+    currentBlock.Move(0, 1);
+    if(CheckCollision()) {
+      currentBlock.Move(0, -1);
+      MergeBlock();
+      currentBlock = nextBlock;
+      nextBlock = GetRandomBlock();
+    }
+  }
+  if(IsKeyPressed(KEY_UP)) {
+    currentBlock.Rotate();
+    if(CheckCollision()) {
+      currentBlock.Rotate();
+    }
+  }
+}
+
+void Game::MergeBlock(){
+  std::vector<Position> currentShape = currentBlock.GetCellPositions();
+  for(Position item : currentShape) {
+    grid.grid[item.y][item.x] = currentBlock.id;
+  }
+  currentBlock = nextBlock;
+   if (BlockFits() == false)
+    {
+        //gameOver = true;
+    }
+  nextBlock = GetRandomBlock();
+
+}
+
+bool Game::BlockFits()
+{
+    std::vector<Position> tiles = currentBlock.GetCellPositions();
+    for (Position item : tiles)
+    {
+        if (CheckCollision() == false)
+        {
+            return false;
+        }
+    }
+    return true;
 }

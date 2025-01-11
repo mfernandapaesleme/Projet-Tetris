@@ -8,7 +8,12 @@ public:
   Game();
   Block GetRandomBlock();
   std::vector<Block> GetBlocks();
+  void Update();
   void Draw();
+  bool CheckCollision();
+  void HandleInput();
+  void MergeBlock();
+  bool BlockFits();
   Grid grid;
 
 private:

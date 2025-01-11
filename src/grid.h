@@ -9,6 +9,9 @@ public:
   void Initialize();
   void Print();
   void Draw();
+  int GetWidth();
+  int GetHeight();
+  int GetCell(int x, int y);
 
 private:
   int numRows;

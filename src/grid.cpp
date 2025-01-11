@@ -37,3 +37,15 @@ void Grid::Draw() {
         }
     }
 }
+
+int Grid::GetWidth() {
+  return numCols;
+}
+
+int Grid::GetHeight() {
+  return numRows;
+}
+
+int Grid::GetCell(int x, int y) {
+  return grid[y][x];
+}
