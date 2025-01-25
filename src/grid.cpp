@@ -49,3 +49,59 @@ int Grid::GetHeight() {
 int Grid::GetCell(int x, int y) {
   return grid[y][x];
 }
+
+bool Grid::IsCellEmpty(int x, int y)
+{
+    if (grid[x][y] == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+
+int Grid::ClearFullRows()
+{
+    int completed = 0;
+    for (int row = numRows - 1; row >= 0; row--)
+    {
+        if (IsRowFull(row))
+        {
+            ClearRow(row);
+            completed++;
+        }
+        else if (completed > 0)
+        {
+            MoveRowDown(row, completed);
+        }
+    }
+    return completed;
+}
+
+bool Grid::IsRowFull(int x)
+{
+    for (int y = 0; y < numCols; y++)
+    {
+        if (grid[x][y] == 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void Grid::ClearRow(int x)
+{
+    for (int y = 0; y < numCols; y++)
+    {
+        grid[x][y] = 0;
+    }
+}
+void Grid::MoveRowDown(int x, int numRows)
+{
+    for (int y = 0; y < numCols; y++)
+    {
+        grid[x + numRows][y] = grid[x][y];
+        grid[x][y] = 0;
+    }
+}

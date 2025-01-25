@@ -11,10 +11,10 @@ Block::Block(){
   columnOffset = 0;
 }
 
-void Block::Draw() {
+void Block::Draw(int offset_x, int offset_y) {
   std::vector<Position> currentShape = GetCellPositions();
   for (Position item : currentShape) {
-    DrawRectangle((item.x * cellSize) + 1, (item.y * cellSize) + 1, cellSize - 1, cellSize - 1, colors[id]);
+    DrawRectangle((item.x * cellSize + offset_x) + 1, (item.y * cellSize + offset_y) + 1, cellSize - 1, cellSize - 1, colors[id]);
   }
 }
 

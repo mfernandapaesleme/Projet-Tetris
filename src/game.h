@@ -6,6 +6,10 @@ class Game {
 
 public:
   Game();
+  ~Game();
+  bool gameOver;
+  int score;
+
   Block GetRandomBlock();
   std::vector<Block> GetBlocks();
   void Update();
@@ -14,6 +18,8 @@ public:
   void HandleInput();
   void MergeBlock();
   bool BlockFits();
+  void Reset();
+  void UpdateScore(int linesCleared, int moveDownPoints);
   Grid grid;
 
 private:
