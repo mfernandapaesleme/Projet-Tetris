@@ -1,4 +1,4 @@
-/* #include "network.h"
+#include "network.h"
 #include <iostream>
 #include <thread>
 #include <cstring> // Para usar memset e strlen
@@ -122,4 +122,3 @@ void NetworkManager::closeConnections() {
     connected = false;
     isServer = false;
 }
- */

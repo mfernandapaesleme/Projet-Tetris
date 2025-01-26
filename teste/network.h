@@ -1,7 +1,9 @@
-/* #ifndef NETWORKMANAGER_H
+#ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
 
 #include <winsock2.h>
+#include <windows.h>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -42,4 +44,3 @@ public:
 };
 
 #endif // NETWO
- */

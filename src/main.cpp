@@ -1,7 +1,7 @@
+#include "network/networkManager.hpp"
 #include <raylib.h>
 #include "game.h"
 #include "menu.h"
-//#include "network.h"
 #include "gamestate.hpp"
 #include "blocks.cpp"
 #include <stdio.h>
@@ -55,6 +55,7 @@ int main() {
                 game.Update();
             }
           
+            menu.SinglePlayer(game.score, game.gameOver);
             game.Draw();
             /* if (game.gameOver) {
                 currentState = GameState::MENU;

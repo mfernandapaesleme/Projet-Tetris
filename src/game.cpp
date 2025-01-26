@@ -1,7 +1,10 @@
+#define NOCURSOR
 #include "game.h"
 #include "raylib.h"
+#include "./network/networkManager.hpp"
 #include <string>
 #include <random>
+#include <iostream>
 
 Game::Game() {
   grid = Grid();
@@ -10,10 +13,31 @@ Game::Game() {
   nextBlock = GetRandomBlock();
   gameOver = false;
   score = 0;
+  NetworkManager networkManager;
+  
+   if (isServer) {
+    if (!networkManager.startServer(25564)) {
+      std::cout << "Erro ao iniciar o servidor!" << std::endl;
+    }
+    else {
+      std::cout << "Servidor iniciado!" << std::endl;
+      //networkManager.sendMessage("Estado do jogo");
+    }
+  } else {
+    if (!networkManager.connectToServer("127.0.0.1", 25564)) { // Conecte ao servidor local para testes
+      std::cout << "Erro ao conectar ao servidor!" << std::endl;
+    }
+    else {
+      //std::string serverMessage = networkManager.receiveMessage();
+      std::cout << "Conectado ao servidor!" << std::endl;
+    }
+  }
 }
 
 Game::~Game()
 {
+  //networkManager.closeConnections();
+
   /*   UnloadSound(rotateSound);
     UnloadSound(clearSound);
     UnloadMusicStream(music);
@@ -40,6 +64,15 @@ void Game::Update() {
         return; // Não continuar atualizando o jogo se estiver no estado "Game Over"
     }
 
+   /*  // Receber mensagem do outro jogador
+    std::string message = networkManager.receiveMessage();
+    if (!message.empty()) {
+     std::cout << "Mensagem recebida: " << message << std::endl;
+    // Enviar mensagem para o outro jogador
+      std::string gameState = "Score:" + std::to_string(score);
+      networkManager.sendMessage(gameState);
+    } */
+    
     currentBlock.Move(0, 1);
     if (CheckCollision()) {
         currentBlock.Move(0, -1);
@@ -51,25 +84,6 @@ void Game::Update() {
 void Game::Draw() {
   grid.Draw();
   currentBlock.Draw(0,0);
-  const Color lightBlue = {59, 85, 162, 255};
-  Font font = LoadFontEx("Font/monogram.ttf", 64, 0, 0);
-
-  DrawTextEx(font, "Score", {365, 15}, 38, 2, WHITE);
-  DrawTextEx(font, "Next", {370, 175}, 38, 2, WHITE);
-  DrawRectangleRounded({320, 55, 170, 60}, 0.3, 6, lightBlue);
-  char scoreText[10];
-  sprintf(scoreText, "%d", score);
-  Vector2 textSize = MeasureTextEx(font, scoreText, 38, 2);
-  DrawTextEx(font, scoreText, {320 + (170 - textSize.x) / 2, 65}, 38, 2, WHITE);
-  DrawRectangleRounded({320, 215, 170, 180}, 0.3, 6, lightBlue);
-  nextBlock.Draw(270, 270);
-    if(gameOver) {
-        DrawTextEx(font, "GAME OVER", {50, 300}, 64, 2, RED);
-        DrawTextEx(font, "Press R to restart", {50, 400}, 32, 2, WHITE);
-    }
-
-
-
   nextBlock.Draw(270, 270);
 }
 

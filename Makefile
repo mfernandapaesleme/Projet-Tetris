@@ -26,7 +26,7 @@
 # Define required raylib variables
 PROJECT_NAME       ?= game
 RAYLIB_VERSION     ?= 5.0.0
-RAYLIB_PATH        ?= ..\..
+RAYLIB_PATH        ?= C:/raylib/raylib
 
 # Define compiler path on Windows
 COMPILER_PATH      ?= C:/raylib/w64devkit/bin
@@ -62,6 +62,29 @@ USE_EXTERNAL_GLFW     ?= FALSE
 # Use Wayland display server protocol on Linux desktop
 # by default it uses X11 windowing system
 USE_WAYLAND_DISPLAY   ?= FALSE
+
+# Diretórios de include e bibliotecas
+INCLUDE_DIRS = -I$(RAYLIB_PATH)/include -I"C:/Users/DELL/OneDrive/Documentos/ENSTA/LabOO/projeto/Projet-Tetris/src/network/include"
+LIB_DIRS = -L$(RAYLIB_PATH)/lib -L"C:/Users/DELL/OneDrive/Documentos/ENSTA/LabOO/projeto/Projet-Tetris/lib"
+
+# Bibliotecas usadas
+LIBS = -lraylib -lenet
+
+# Arquivos fonte e objeto
+SRCS = src/main.cpp
+OBJS = $(SRCS:.cpp=.o)
+
+# Configuração de build
+CFLAGS = -Wall -g $(INCLUDE_DIRS)
+LDFLAGS = $(LIB_DIRS) $(LIBS)
+
+# Regras
+all: $(PROJECT_NAME)
+
+%.o: %.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Removed duplicate clean target
 
 # Determine PLATFORM_OS in case PLATFORM_DESKTOP selected
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)

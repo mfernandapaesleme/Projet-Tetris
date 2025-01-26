@@ -1,7 +1,6 @@
 #pragma once
 #include "grid.h"
 #include "blocks.cpp"
-// #include "network.h"
 #include "raylib.h"
 
 class Game {
@@ -30,4 +29,5 @@ private:
   Block currentBlock;
   Block nextBlock;
   Grid grid;
+  NetworkManager networkManager;
 };

@@ -1,6 +1,4 @@
-#ifndef MENU_H
-#define MENU_H
-
+#pragma once
 #include "raylib.h"
 
 class Menu {
@@ -10,9 +8,9 @@ public:
     void Render();
     void Choice();
     void Update2();
+    void SinglePlayer(int score, int gameOver);
     bool isSinglePlayer;
     bool isMultiplayer;
     bool isHost;
 };
 
-#endif // MENU_H

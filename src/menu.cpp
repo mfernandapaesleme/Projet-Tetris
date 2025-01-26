@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "raylib.h"
+#include <stdio.h>
 
 Menu::Menu() {
     isSinglePlayer = false;
@@ -39,5 +40,23 @@ void Menu::Update2() {
     }
     if (IsKeyPressed(KEY_TWO)) {
         isHost = false;
+    }
+}
+
+void Menu::SinglePlayer(int score, int gameOver) {
+    const Color lightBlue = {59, 85, 162, 255};
+    Font font = LoadFontEx("Font/monogram.ttf", 64, 0, 0);
+
+    DrawTextEx(font, "Score", {365, 15}, 38, 2, WHITE);
+    DrawTextEx(font, "Next", {370, 175}, 38, 2, WHITE);
+    DrawRectangleRounded({320, 55, 170, 60}, 0.3, 6, lightBlue);
+    char scoreText[10];
+    sprintf(scoreText, "%d", score);
+    Vector2 textSize = MeasureTextEx(font, scoreText, 38, 2);
+    DrawTextEx(font, scoreText, {320 + (170 - textSize.x) / 2, 65}, 38, 2, WHITE);
+    DrawRectangleRounded({320, 215, 170, 180}, 0.3, 6, lightBlue);
+    if(gameOver) {
+        DrawTextEx(font, "GAME OVER", {50, 300}, 64, 2, RED);
+        DrawTextEx(font, "Press R to restart", {50, 400}, 32, 2, WHITE);
     }
 }

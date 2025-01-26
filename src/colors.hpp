@@ -1,4 +1,5 @@
 #pragma once
+#define NOCURSOR
 #include <raylib.h>
 #include <vector>
 
