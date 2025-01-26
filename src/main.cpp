@@ -1,63 +1,89 @@
 #include <raylib.h>
 #include "game.h"
+#include "menu.h"
+//#include "network.h"
+#include "gamestate.hpp"
 #include "blocks.cpp"
 #include <stdio.h>
 
 double lastUpdateTime = 0;
-
-bool EventTriggered()
-{
+bool EventTriggered(){
     double currentTime = GetTime();
 
-    if ((currentTime - lastUpdateTime) >= 1)
-    {
+    if ((currentTime - lastUpdateTime) >= 1){
         lastUpdateTime = currentTime;
         return true;
     }
     return false;
-}
+    }
 
-int main() 
-{
+int main() {
+
     const Color darkBlue = {44, 44, 127, 255};
-    const Color lightBlue = {59, 85, 162, 255};
-    Font font = LoadFontEx("Font/monogram.ttf", 64, 0, 0);
-    
-    constexpr int screenWidth = 500;
-    constexpr int screenHeight = 600;
 
+    const int screenWidth = 500;
+    const int screenHeight = 600;
     InitWindow(screenWidth, screenHeight, "Tetris Game");
     SetTargetFPS(60);
 
-    Game game = Game();
+    Game game;
+    Menu menu;
+    //NetworkManager networkManager;
+    GameState currentState = GameState::MENU;
 
-    while (!WindowShouldClose())
-    {
-        game.HandleInput();
-        if (EventTriggered() && !game.gameOver)
-        {
-            game.Update();
-        }
+    while (!WindowShouldClose()) {
         BeginDrawing();
-            ClearBackground(darkBlue);
-            DrawTextEx(font, "Score", {365, 15}, 38, 2, WHITE);
-            DrawTextEx(font, "Next", {370, 175}, 38, 2, WHITE);
-            if (game.gameOver)
-            {
-                DrawTextEx(font, "GAME OVER", {320, 450}, 28, 2, WHITE);
+        ClearBackground(darkBlue);
+
+        switch (currentState)
+        {
+        case GameState::MENU:
+            menu.Update();
+            menu.Render();
+            if (menu.isSinglePlayer) {
+                currentState = GameState::SINGLE_PLAYER;
             }
-            DrawRectangleRounded({320, 55, 170, 60}, 0.3, 6, lightBlue);
-
-            char scoreText[10];
-            sprintf(scoreText, "%d", game.score);
-            Vector2 textSize = MeasureTextEx(font, scoreText, 38, 2);
-
-            DrawTextEx(font, scoreText, {320 + (170 - textSize.x) / 2, 65}, 38, 2, WHITE);
-            DrawRectangleRounded({320, 215, 170, 180}, 0.3, 6, lightBlue);
+            if (menu.isMultiplayer) {
+                currentState = GameState::CHOICE;
+            }
+            break;
+        
+        case GameState::SINGLE_PLAYER:
+            game.HandleInput();
+            if (EventTriggered() && !game.gameOver)
+            {
+                game.Update();
+            }
+          
             game.Draw();
+            /* if (game.gameOver) {
+                currentState = GameState::MENU;
+                game.Reset();
+            } */
+            break;
+        case GameState::CHOICE:
+            menu.Choice();
+            menu.Update2();
+            if (menu.isHost) {
+                currentState = GameState::WAITING_FOR_CONNECTION;
+            }
+            else {
+                currentState = GameState::SEARCHING_FOR_SERVER;
+            }
+            break;
+        case GameState::WAITING_FOR_CONNECTION:
+            //networkManager.startServer(54000);
+            //networkManager.waitForClients();
+            break;
+        case GameState::SEARCHING_FOR_SERVER:
+            //networkManager.connectToServer("  
+            break;
+        default:
+            break;
+        }
 
         EndDrawing();
     }
-    
-    CloseWindow();
+    CloseWindow(); // Fechar a janela
+    return 0;
 }

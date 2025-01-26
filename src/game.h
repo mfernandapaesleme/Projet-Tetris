@@ -1,6 +1,8 @@
 #pragma once
 #include "grid.h"
 #include "blocks.cpp"
+// #include "network.h"
+#include "raylib.h"
 
 class Game {
 
@@ -9,6 +11,8 @@ public:
   ~Game();
   bool gameOver;
   int score;
+  bool isSinglePlayer;
+  bool isServer;
 
   Block GetRandomBlock();
   std::vector<Block> GetBlocks();
@@ -20,10 +24,10 @@ public:
   bool BlockFits();
   void Reset();
   void UpdateScore(int linesCleared, int moveDownPoints);
-  Grid grid;
 
 private:
   std::vector<Block> blocks;
   Block currentBlock;
   Block nextBlock;
+  Grid grid;
 };
