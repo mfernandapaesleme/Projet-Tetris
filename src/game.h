@@ -3,6 +3,8 @@
 #include "blocks.cpp"
 #include "raylib.h"
 
+
+// Définition de la classe Game, représentant le jeu principal.
 class Game {
 
 public:

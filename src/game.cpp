@@ -4,6 +4,8 @@
 #include <random>
 #include <iostream>
 
+
+// Constructeur de la classe Game.
 Game::Game() {
   grid = Grid();
   blocks = GetBlocks();
@@ -13,10 +15,14 @@ Game::Game() {
   score = 0;
   }
 
+
+// Destructeur de la classe Game.
 Game::~Game()
 {
 }
 
+
+// Méthode pour obtenir un bloc aléatoire parmi ceux disponibles.
 Block Game::GetRandomBlock() {
   if(blocks.empty()) {
     blocks = GetBlocks();
@@ -28,10 +34,13 @@ Block Game::GetRandomBlock() {
   return randomBlock;
 }
 
+
+// Méthode pour créer la liste initiale des blocs disponibles.
 std::vector<Block> Game::GetBlocks() {
   return {IBlock(), JBlock(), LBlock(), OBlock(), SBlock(), TBlock(), ZBlock()};
 }
 
+// Mise à jour de l'état du jeu.
 void Game::Update() {
     if (gameOver) {
         return; // Não continuar atualizando o jogo se estiver no estado "Game Over"
@@ -44,13 +53,14 @@ void Game::Update() {
     }
 }
 
-
+// Dessin de l'état actuel du jeu.
 void Game::Draw() {
   grid.Draw();
   currentBlock.Draw(0,0);
   nextBlock.Draw(270, 270);
 }
 
+// Vérifie s'il y a une collision entre le bloc et les limites ou autres blocs.
 bool Game::CheckCollision() {   
   std::vector<Position> currentShape = currentBlock.GetCellPositions();
   for(Position item : currentShape) {
@@ -61,6 +71,8 @@ bool Game::CheckCollision() {
   return false;
 }
 
+
+// Gestion des entrées clavier.
 void Game::HandleInput() {
   if((IsKeyPressed(KEY_R)) || (gameOver && IsKeyPressed(KEY_ENTER))) { 
     gameOver = false;
@@ -98,6 +110,8 @@ void Game::HandleInput() {
   }
 }
 
+
+// Fusionne le bloc actuel dans la grille et vérifie les lignes complètes.
 void Game::MergeBlock() {
     std::vector<Position> currentShape = currentBlock.GetCellPositions();
     for (Position item : currentShape) {
@@ -106,24 +120,24 @@ void Game::MergeBlock() {
 
     int rowsCleared = grid.ClearFullRows();
     if (rowsCleared > 0) {
-        // Atualizar a pontuação
+       // Mettre à jour le score
         UpdateScore(rowsCleared, 0);
     }
 
-    // Preparar próximo bloco
+    // Préparer le bloc suivant
     currentBlock = nextBlock;
     nextBlock = GetRandomBlock();
 
-    // Checar se o próximo bloco cabe
+    // Vérifiez si le bloc suivant convient
     if (!BlockFits()) {
-        gameOver = true; // Ativar Game Over
+        gameOver = true; // Activer Game Over
     }
 }
 
 bool Game::BlockFits() {
     std::vector<Position> tiles = currentBlock.GetCellPositions();
     for (Position item : tiles) {
-        // Verificar se está fora do grid ou se está colidindo com outro bloco
+        // Vérifiez s'il est hors grille ou s'il entre en collision avec un autre bloc
         if (item.x < 0 || item.x >= grid.GetWidth() || 
             item.y >= grid.GetHeight() || 
             (item.y >= 0 && grid.GetCell(item.x, item.y) != 0)) {
@@ -133,6 +147,7 @@ bool Game::BlockFits() {
     return true;
 }
 
+// Réinitialise l'état du jeu.
 void Game::Reset()
 {
     grid.Initialize();
@@ -140,9 +155,11 @@ void Game::Reset()
     currentBlock = GetRandomBlock();
     nextBlock = GetRandomBlock();
     score = 0;
-    gameOver = false; // Garantir que o estado do jogo seja reiniciado
+    gameOver = false; // Assurez que l'état du jeu est réinitialisé
 }
 
+
+// Met à jour le score en fonction des lignes effacées et des points de déplacement.
 void Game::UpdateScore(int linesCleared, int moveDownPoints)
 {
     switch (linesCleared)

@@ -3,6 +3,8 @@
 #include <raylib.h>
 #include <vector>
 
+
+// Fonction inline qui retourne une liste des couleurs associées aux cellules du jeu.
 inline std::vector<Color> GetCellColors() {
     return {
         BLACK,  // empty cell

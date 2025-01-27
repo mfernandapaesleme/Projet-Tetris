@@ -1,5 +1,6 @@
 #pragma once
 
+// Enumération représentant les différents états possibles du jeu.
 enum class GameState {
     MENU,
     SINGLE_PLAYER,
