@@ -5,6 +5,8 @@
 
 class LBlock : public Block {
 public:
+
+// Classe représentant un bloc en forme de L.
   LBlock(){
     id = 1;
     cells[0] = {Position(0, 2), Position(1, 0), Position(1, 1), Position(1, 2)};
@@ -15,6 +17,8 @@ public:
   }
 };
 
+
+// Classe représentant un bloc en forme de J.
 class JBlock : public Block {
 public:
   JBlock(){
@@ -27,6 +31,8 @@ public:
   }
 };
 
+
+// Classe représentant un bloc en forme de I.
 class IBlock : public Block {
 public:
   IBlock(){
@@ -39,6 +45,8 @@ public:
   }
 };
 
+
+// Classe représentant un bloc en forme de O(carré)
 class OBlock : public Block {
 public:
   OBlock(){
@@ -48,6 +56,8 @@ public:
   }
 };
 
+
+// Classe représentant un bloc en forme de S.
 class SBlock : public Block {
 public:
   SBlock(){
@@ -60,6 +70,8 @@ public:
   }
 };
 
+
+// Classe représentant un bloc en forme de Z.
 class ZBlock : public Block {
 public:
   ZBlock(){
@@ -72,6 +84,8 @@ public:
   }
 };
 
+
+// Classe représentant un bloc en forme de T.
 class TBlock : public Block {
 public:
   TBlock(){
