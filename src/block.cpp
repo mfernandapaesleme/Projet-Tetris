@@ -2,6 +2,9 @@
 #include "block.h"
 #include <iostream>
 
+
+
+// Constructeur de la classe Block, initialise les attributs par défaut.
 Block::Block(){
   cellSize = 30;
   rotationState = 0;
@@ -11,6 +14,8 @@ Block::Block(){
   columnOffset = 0;
 }
 
+
+// Méthode pour dessiner le bloc sur l'écran.
 void Block::Draw(int offset_x, int offset_y) {
   std::vector<Position> currentShape = GetCellPositions();
   for (Position item : currentShape) {
@@ -18,11 +23,14 @@ void Block::Draw(int offset_x, int offset_y) {
   }
 }
 
+// Méthode pour déplacer le bloc en ajustant les décalages de ligne et de colonne.
 void Block::Move(int x, int y) {
   rowOffset += x;
   columnOffset += y;
 }
 
+
+// Méthode pour obtenir les positions des cellules après application des transformations.
 std::vector<Position> Block::GetCellPositions() {
   std::vector<Position> currentShape = cells[rotationState];
   std::vector<Position> movedShape;  
@@ -32,6 +40,8 @@ std::vector<Position> Block::GetCellPositions() {
   return movedShape;
 }
 
+
+// Méthode pour faire pivoter le bloc.
 void Block::Rotate()
 {
     rotationState++;
