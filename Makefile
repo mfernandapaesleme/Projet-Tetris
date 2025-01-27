@@ -64,14 +64,14 @@ USE_EXTERNAL_GLFW     ?= FALSE
 USE_WAYLAND_DISPLAY   ?= FALSE
 
 # Diretórios de include e bibliotecas
-INCLUDE_DIRS = -I$(RAYLIB_PATH)/include -I"C:/Users/DELL/OneDrive/Documentos/ENSTA/LabOO/projeto/Projet-Tetris/src/network/include"
+INCLUDE_DIRS = -I$(RAYLIB_PATH)/include -I"C:/Users/DELL/OneDrive/Documentos/ENSTA/LabOO/projeto/Projet-Tetris/include"
 LIB_DIRS = -L$(RAYLIB_PATH)/lib -L"C:/Users/DELL/OneDrive/Documentos/ENSTA/LabOO/projeto/Projet-Tetris/lib"
 
 # Bibliotecas usadas
 LIBS = -lraylib -lenet
 
 # Arquivos fonte e objeto
-SRCS = src/main.cpp
+SRCS = src/main.cpp src/game.cpp src/menu.cpp src/grid.cpp src/position.cpp src/block.cpp src/blocks.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Configuração de build

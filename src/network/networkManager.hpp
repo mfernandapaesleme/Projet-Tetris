@@ -1,4 +1,4 @@
-#ifndef NETWORK_MANAGER_HPP
+/* #ifndef NETWORK_MANAGER_HPP
 #define NETWORK_MANAGER_HPP
 
 #include <enet/enet.h>
@@ -48,4 +48,4 @@ private:
     NetworkState state;
 };
 
-#endif // NETWORK_MANAGER_HPP
+#endif // NETWORK_MANAGER_HPP */

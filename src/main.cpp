@@ -1,5 +1,5 @@
-#include "network/networkManager.hpp"
 #include <raylib.h>
+
 #include "game.h"
 #include "menu.h"
 #include "gamestate.hpp"
@@ -28,7 +28,6 @@ int main() {
 
     Game game;
     Menu menu;
-    //NetworkManager networkManager;
     GameState currentState = GameState::MENU;
 
     while (!WindowShouldClose()) {
@@ -73,11 +72,8 @@ int main() {
             }
             break;
         case GameState::WAITING_FOR_CONNECTION:
-            //networkManager.startServer(54000);
-            //networkManager.waitForClients();
             break;
         case GameState::SEARCHING_FOR_SERVER:
-            //networkManager.connectToServer("  
             break;
         default:
             break;

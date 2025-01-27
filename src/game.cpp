@@ -1,7 +1,5 @@
-#define NOCURSOR
 #include "game.h"
 #include "raylib.h"
-#include "./network/networkManager.hpp"
 #include <string>
 #include <random>
 #include <iostream>
@@ -13,35 +11,10 @@ Game::Game() {
   nextBlock = GetRandomBlock();
   gameOver = false;
   score = 0;
-  NetworkManager networkManager;
-  
-   if (isServer) {
-    if (!networkManager.startServer(25564)) {
-      std::cout << "Erro ao iniciar o servidor!" << std::endl;
-    }
-    else {
-      std::cout << "Servidor iniciado!" << std::endl;
-      //networkManager.sendMessage("Estado do jogo");
-    }
-  } else {
-    if (!networkManager.connectToServer("127.0.0.1", 25564)) { // Conecte ao servidor local para testes
-      std::cout << "Erro ao conectar ao servidor!" << std::endl;
-    }
-    else {
-      //std::string serverMessage = networkManager.receiveMessage();
-      std::cout << "Conectado ao servidor!" << std::endl;
-    }
   }
-}
 
 Game::~Game()
 {
-  //networkManager.closeConnections();
-
-  /*   UnloadSound(rotateSound);
-    UnloadSound(clearSound);
-    UnloadMusicStream(music);
-    CloseAudioDevice(); */
 }
 
 Block Game::GetRandomBlock() {
@@ -63,15 +36,6 @@ void Game::Update() {
     if (gameOver) {
         return; // Não continuar atualizando o jogo se estiver no estado "Game Over"
     }
-
-   /*  // Receber mensagem do outro jogador
-    std::string message = networkManager.receiveMessage();
-    if (!message.empty()) {
-     std::cout << "Mensagem recebida: " << message << std::endl;
-    // Enviar mensagem para o outro jogador
-      std::string gameState = "Score:" + std::to_string(score);
-      networkManager.sendMessage(gameState);
-    } */
     
     currentBlock.Move(0, 1);
     if (CheckCollision()) {
@@ -184,13 +148,16 @@ void Game::UpdateScore(int linesCleared, int moveDownPoints)
     switch (linesCleared)
     {
     case 1:
-        score += 100;
+        score += 40;
         break;
     case 2:
-        score += 300;
+        score += 100;
         break;
     case 3:
-        score += 500;
+        score += 300;
+        break;
+    case 4:
+        score += 1200;
         break;
     default:
         break;

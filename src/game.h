@@ -29,5 +29,4 @@ private:
   Block currentBlock;
   Block nextBlock;
   Grid grid;
-  NetworkManager networkManager;
 };

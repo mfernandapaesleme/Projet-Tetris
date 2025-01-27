@@ -1,4 +1,4 @@
-#include "networkManager.hpp"
+/* #include "networkManager.hpp"
 #include <iostream>
 
 NetworkManager::NetworkManager() : host(nullptr), peer(nullptr), state(NetworkState::DISCONNECTED) {}
@@ -104,3 +104,4 @@ std::vector<NetworkPlayer> NetworkManager::receivePlayerStates() {
 NetworkState NetworkManager::getState() const {
     return state;
 }
+ */
