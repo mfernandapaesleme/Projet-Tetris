@@ -1,10 +1,11 @@
 #include <raylib.h>
-
+#include "network/networkManager.hpp"
 #include "game.h"
 #include "menu.h"
 #include "gamestate.hpp"
 #include "blocks.cpp"
 #include <stdio.h>
+#include <iostream>
 
 double lastUpdateTime = 0;
 bool EventTriggered(){
@@ -29,6 +30,20 @@ int main() {
     Game game;
     Menu menu;
     GameState currentState = GameState::MENU;
+
+    // Inicia o servidor na porta 4545
+    NetworkManager server(NetworkManager::Mode::Server, "", 4545);
+    server.start();
+
+    // Aguarda e recebe a mensagem do cliente
+    std::string message = server.receive();
+    std::cout << "Mensagem recebida do cliente: " << message << std::endl;
+
+    // Envia uma resposta para o cliente
+    server.send("Olá, Cliente!");
+
+    // Fecha o servidor
+    return 0;
 
     while (!WindowShouldClose()) {
         BeginDrawing();

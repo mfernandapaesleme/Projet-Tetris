@@ -64,15 +64,15 @@ USE_EXTERNAL_GLFW     ?= FALSE
 USE_WAYLAND_DISPLAY   ?= FALSE
 
 # Diretórios de include e bibliotecas
-INCLUDE_DIRS = -I$(RAYLIB_PATH)/include -I"C:/Users/DELL/OneDrive/Documentos/ENSTA/LabOO/projeto/Projet-Tetris/include"
-LIB_DIRS = -L$(RAYLIB_PATH)/lib -L"C:/Users/DELL/OneDrive/Documentos/ENSTA/LabOO/projeto/Projet-Tetris/lib"
+INCLUDE_DIRS = -I$(RAYLIB_PATH)/include 
+LIB_DIRS = -L$(RAYLIB_PATH)/lib 
 
 # Bibliotecas usadas
-LIBS = -lraylib -lenet
+LIBS = -lraylib -lws2_32
 
 # Arquivos fonte e objeto
-SRCS = src/main.cpp src/game.cpp src/menu.cpp src/grid.cpp src/position.cpp src/block.cpp src/blocks.cpp
-OBJS = $(SRCS:.cpp=.o)
+SRCS = src/main.cpp src/game.cpp src/menu.cpp src/grid.cpp src/position.cpp src/block.cpp src/blocks.cpp src/network/networkManager.cpp
+OBJS = $(SRCS:.cpp=.o)  
 
 # Configuração de build
 CFLAGS = -Wall -g $(INCLUDE_DIRS)

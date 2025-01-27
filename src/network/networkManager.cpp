@@ -1,107 +1,119 @@
-/* #include "networkManager.hpp"
+#include "networkManager.hpp"
 #include <iostream>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
-NetworkManager::NetworkManager() : host(nullptr), peer(nullptr), state(NetworkState::DISCONNECTED) {}
+// Definir o número de sockets
+#define DEFAULT_PORT 4545
+
+#pragma comment(lib, "ws2_32.lib")  // Necessário para Winsock
+
+// A implementação privada (PImpl)
+class NetworkManager:: Impl {
+public:
+    Impl(Mode mode, const std::string& address, int port)
+        : mode(mode), address(address), port(port), serverSocket(INVALID_SOCKET) {}
+
+    ~Impl() {
+        closesocket(serverSocket);
+        WSACleanup();
+    }
+
+    void start() {
+        WSADATA wsaData;
+        if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+            std::cerr << "Winsock initialization failed." << std::endl;
+            return;
+        }
+
+        sockaddr_in addr;
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(port);
+
+        if (mode == Mode::Server) {
+            // Server side
+            serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            if (serverSocket == INVALID_SOCKET) {
+                std::cerr << "Socket creation failed!" << std::endl;
+                return;
+            }
+
+            addr.sin_addr.s_addr = INADDR_ANY;
+
+            if (bind(serverSocket, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) {
+                std::cerr << "Binding failed!" << std::endl;
+                return;
+            }
+
+            if (listen(serverSocket, SOMAXCONN) == SOCKET_ERROR) {
+                std::cerr << "Listen failed!" << std::endl;
+                return;
+            }
+
+            std::cout << "Server started on port " << port << std::endl;
+        } else {
+            // Client side
+            serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            if (serverSocket == INVALID_SOCKET) {
+                std::cerr << "Socket creation failed!" << std::endl;
+                return;
+            }
+
+            inet_pton(AF_INET, address.c_str(), &addr.sin_addr);
+
+            if (connect(serverSocket, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) {
+                std::cerr << "Connection failed!" << std::endl;
+                return;
+            }
+
+            std::cout << "Connected to " << address << ":" << port << std::endl;
+        }
+    }
+
+    void send(const std::string& message) {
+        if (serverSocket == INVALID_SOCKET) return;
+
+        if (::send(serverSocket, message.c_str(), message.length(), 0) == SOCKET_ERROR) {
+            std::cerr << "Send failed!" << std::endl;
+        }
+    }
+
+    std::string receive() {
+        if (serverSocket == INVALID_SOCKET) return "";
+
+        char buffer[1024];
+        int bytesReceived = recv(serverSocket, buffer, sizeof(buffer), 0);
+        if (bytesReceived == SOCKET_ERROR) {
+            std::cerr << "Receive failed!" << std::endl;
+            return "";
+        }
+
+        return std::string(buffer, bytesReceived);
+    }
+
+private:
+    Mode mode;
+    std::string address;
+    int port;
+    SOCKET serverSocket;  // Renomeado para evitar conflito
+};
+
+// Construtor e destruidor da classe NetworkManager
+NetworkManager::NetworkManager(Mode mode, const std::string& address, int port)
+    : impl(new Impl(mode, address, port)) {}
 
 NetworkManager::~NetworkManager() {
-    shutdown();
+    delete impl;
 }
 
-bool NetworkManager::initialize() {
-    if (enet_initialize() != 0) {
-        std::cerr << "Failed to initialize ENet.\n";
-        return false;
-    }
-    return true;
+void NetworkManager::start() {
+    impl->start();
 }
 
-void NetworkManager::shutdown() {
-    if (host) enet_host_destroy(host);
-    enet_deinitialize();
+void NetworkManager::send(const std::string& message) {
+    impl->send(message);
 }
 
-bool NetworkManager::startServer(int port) {
-    ENetAddress address;
-    address.host = ENET_HOST_ANY;
-    address.port = port;
-
-    host = enet_host_create(&address, 2, 2, 0, 0);
-    if (!host) {
-        std::cerr << "Failed to start server.\n";
-        return false;
-    }
-
-    state = NetworkState::HOSTING;
-    return true;
-}
-
-void NetworkManager::waitForClients() {
-    if (!host) return;
-
-    ENetEvent event;
-    while (enet_host_service(host, &event, 1000) > 0) {
-        if (event.type == ENET_EVENT_TYPE_CONNECT) {
-            std::cout << "Client connected.\n";
-        }
-    }
-}
-
-bool NetworkManager::connectToServer(const std::string& address, int port) {
-    ENetAddress enetAddress;
-    enet_address_set_host(&enetAddress, address.c_str());
-    enetAddress.port = port;
-
-    host = enet_host_create(nullptr, 1, 2, 0, 0);
-    if (!host) {
-        std::cerr << "Failed to create client host.\n";
-        return false;
-    }
-
-    peer = enet_host_connect(host, &enetAddress, 2, 0);
-    if (!peer) {
-        std::cerr << "Failed to connect to server.\n";
-        return false;
-    }
-
-    state = NetworkState::CONNECTING;
-    return true;
-}
-
-void NetworkManager::broadcastPlayerState(const NetworkPlayer& player) {
-    if (!host) return;
-
-    ENetPacket* packet = enet_packet_create(&player, sizeof(player), ENET_PACKET_FLAG_RELIABLE);
-    enet_host_broadcast(host, 0, packet);
-    enet_host_flush(host);
-}
-
-void NetworkManager::sendPlayerState(const NetworkPlayer& player) {
-    if (!peer) return;
-
-    ENetPacket* packet = enet_packet_create(&player, sizeof(player), ENET_PACKET_FLAG_RELIABLE);
-    enet_peer_send(peer, 0, packet);
-    enet_host_flush(host);
-}
-
-std::vector<NetworkPlayer> NetworkManager::receivePlayerStates() {
-    std::vector<NetworkPlayer> players;
-
-    if (!host) return players;
-
-    ENetEvent event;
-    while (enet_host_service(host, &event, 0) > 0) {
-        if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-            NetworkPlayer player;
-            memcpy(&player, event.packet->data, sizeof(player));
-            players.push_back(player);
-            enet_packet_destroy(event.packet);
-        }
-    }
-
-    return players;
-}
-
-NetworkState NetworkManager::getState() const {
-    return state;
-}
- */
+std::string NetworkManager::receive() {
+    return impl->receive();
+}   
