@@ -4,7 +4,7 @@
 
 class Grid {
 public:
-  Grid(); // constructor
+  Grid();                 // constructor
   int grid[20][10] = {0}; // 20 rows, 10 columns
   void Initialize();
   void Print();

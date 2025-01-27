@@ -1,20 +1,24 @@
 #pragma once
 
-#include "block.h"
-#include "position.h"
+#include "block.h"        // Inclut la définition de la classe Block
+#include "position.h"     // Inclut la définition de la classe Position
 
+
+// Classe représentant le bloc en forme de "L"
 class LBlock : public Block {
 public:
   LBlock(){
     id = 1;
-    cells[0] = {Position(0, 2), Position(1, 0), Position(1, 1), Position(1, 2)};
+    cells[0] = {Position(0, 2), Position(1, 0), Position(1, 1), Position(1, 2)};     // Définition des positions des cellules du bloc L pour chaque rotation
     cells[1] = {Position(0, 1), Position(1, 1), Position(2, 1), Position(2, 2)};
     cells[2] = {Position(1, 0), Position(1, 1), Position(1, 2), Position(2, 0)};
     cells[3] = {Position(0, 0), Position(0, 1), Position(1, 1), Position(2, 1)};
-    Move(3, 0);
+    Move(3, 0);                                                                      // Déplace le bloc à la position initiale
   }
 };
 
+
+// Classe représentant le bloc en forme de "J"
 class JBlock : public Block {
 public:
   JBlock(){
@@ -27,6 +31,8 @@ public:
   }
 };
 
+
+// Classe représentant le bloc en forme de "I"
 class IBlock : public Block {
 public:
   IBlock(){
@@ -39,6 +45,9 @@ public:
   }
 };
 
+
+
+// Classe représentant le bloc en forme de "O" (carré)
 class OBlock : public Block {
 public:
   OBlock(){
@@ -48,6 +57,8 @@ public:
   }
 };
 
+
+// Classe représentant le bloc en forme de "S"
 class SBlock : public Block {
 public:
   SBlock(){
@@ -60,6 +71,8 @@ public:
   }
 };
 
+
+// Classe représentant le bloc en forme de "Z"
 class ZBlock : public Block {
 public:
   ZBlock(){
@@ -72,6 +85,8 @@ public:
   }
 };
 
+
+// Classe représentant le bloc en forme de "T"
 class TBlock : public Block {
 public:
   TBlock(){

@@ -10,6 +10,7 @@ Grid::Grid() {
   colors = GetCellColors();
 }
 
+// Initialise la grille avec des cellules vides (valeur 0)
 void Grid::Initialize() {  // i = rows, j = columns
   for (int i = 0; i < numRows; i++) {
         for (int j = 0; j < numCols; j++) {
@@ -18,6 +19,7 @@ void Grid::Initialize() {  // i = rows, j = columns
     }
 }
 
+// Affiche la grille dans la console
 void Grid::Print() {
   for (int i = 0; i < numRows; i++) {
         for (int j = 0; j < numCols; j++) {
@@ -28,6 +30,7 @@ void Grid::Print() {
 }
 
 
+// Dessine la grille à l'écran avec les couleurs correspondantes
 void Grid::Draw() {
   for (int i = 0; i < numRows; i++) {
         for (int j = 0; j < numCols; j++) {
@@ -38,18 +41,22 @@ void Grid::Draw() {
     }
 }
 
+// Retourne la largeur de la grille (en nombre de colonnes)
 int Grid::GetWidth() {
   return numCols;
 }
 
+// Retourne la hauteur de la grille (en nombre de lignes)
 int Grid::GetHeight() {
   return numRows;
 }
 
+// Retourne la valeur de la cellule à la position (x, y)
 int Grid::GetCell(int x, int y) {
   return grid[y][x];
 }
 
+// Vérifie si une cellule est vide (valeur 0)
 bool Grid::IsCellEmpty(int x, int y)
 {
     if (grid[x][y] == 0)
@@ -60,6 +67,7 @@ bool Grid::IsCellEmpty(int x, int y)
 }
 
 
+// Supprime les lignes complètes et déplace les autres lignes vers le bas
 int Grid::ClearFullRows()
 {
     int completed = 0;
@@ -78,6 +86,7 @@ int Grid::ClearFullRows()
     return completed;
 }
 
+// Vérifie si une ligne est pleine (aucune cellule vide)
 bool Grid::IsRowFull(int x)
 {
     for (int y = 0; y < numCols; y++)
@@ -90,6 +99,8 @@ bool Grid::IsRowFull(int x)
     return true;
 }
 
+
+// Efface une ligne complète (remplace les cellules par des 0)
 void Grid::ClearRow(int x)
 {
     for (int y = 0; y < numCols; y++)
@@ -97,6 +108,8 @@ void Grid::ClearRow(int x)
         grid[x][y] = 0;
     }
 }
+
+// Déplace une ligne vers le bas après qu'une ligne ait été effacée
 void Grid::MoveRowDown(int x, int numRows)
 {
     for (int y = 0; y < numCols; y++)
