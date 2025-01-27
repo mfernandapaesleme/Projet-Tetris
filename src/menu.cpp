@@ -65,7 +65,7 @@ void Menu::SinglePlayer(int score, int gameOver) {
     DrawTextEx(font, scoreText, {320 + (170 - textSize.x) / 2, 65}, 38, 2, WHITE);
     DrawRectangleRounded({320, 215, 170, 180}, 0.3, 6, lightBlue);
     if(gameOver) {
-        DrawTextEx(font, "GAME OVER", {50, 300}, 64, 2, RED);
-        DrawTextEx(font, "Press R to restart", {50, 400}, 32, 2, WHITE);
+        DrawTextEx(font, "GAME OVER", {320, 450}, 28, 2, RED);
+        DrawTextEx(font, "Press R to restart", {320, 500}, 16, 2, WHITE);
     }
 }

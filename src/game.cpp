@@ -96,7 +96,6 @@ void Game::HandleInput() {
       if(CheckCollision() || BlockFits() == false) {
         currentBlock.Move(0, -1);
         MergeBlock();
-        UpdateScore(0, 1);
         currentBlock = nextBlock;
         nextBlock = GetRandomBlock();
       }
