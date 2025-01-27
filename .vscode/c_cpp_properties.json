@@ -5,8 +5,7 @@
             "includePath": [
                 "C:/raylib/raylib/src/**",
                 "C:/mingw64/bin",
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/include/enet"
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "_DEBUG",

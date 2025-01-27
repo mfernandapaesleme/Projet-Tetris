@@ -5,9 +5,9 @@
 
 class NetworkManager {
 public:
-    enum class Mode { Server, Client };
+    //enum class Mode { Server, Client };
 
-    NetworkManager(Mode mode, const std::string& address, int port);
+    NetworkManager(int mode, const std::string& address, int port);
     ~NetworkManager();
 
     void start();

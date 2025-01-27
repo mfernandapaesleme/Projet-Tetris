@@ -32,7 +32,7 @@ int main() {
     GameState currentState = GameState::MENU;
 
     // Inicia o servidor na porta 4545
-    NetworkManager server(NetworkManager::Mode::Server, "", 4545);
+    NetworkManager server(0, "", 4545);
     server.start();
 
     // Aguarda e recebe a mensagem do cliente

@@ -68,7 +68,7 @@ INCLUDE_DIRS = -I$(RAYLIB_PATH)/include
 LIB_DIRS = -L$(RAYLIB_PATH)/lib 
 
 # Bibliotecas usadas
-LIBS = -lraylib -lws2_32
+LIBS = -lraylib -lws2_32 -lm -lGL -ldrm -lgbm -lEGL -lGLESv2
 
 # Arquivos fonte e objeto
 SRCS = src/main.cpp src/game.cpp src/menu.cpp src/grid.cpp src/position.cpp src/block.cpp src/blocks.cpp src/network/networkManager.cpp

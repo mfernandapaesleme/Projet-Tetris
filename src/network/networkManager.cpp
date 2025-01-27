@@ -6,12 +6,12 @@
 // Definir o número de sockets
 #define DEFAULT_PORT 4545
 
-#pragma comment(lib, "ws2_32.lib")  // Necessário para Winsock
+//#pragma comment(lib, "ws2_32.lib")  // Necessário para Winsock
 
 // A implementação privada (PImpl)
 class NetworkManager:: Impl {
 public:
-    Impl(Mode mode, const std::string& address, int port)
+    Impl(int mode, const std::string& address, int port)
         : mode(mode), address(address), port(port), serverSocket(INVALID_SOCKET) {}
 
     ~Impl() {
@@ -30,7 +30,7 @@ public:
         addr.sin_family = AF_INET;
         addr.sin_port = htons(port);
 
-        if (mode == Mode::Server) {
+        if (mode == 0) {
             // Server side
             serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
             if (serverSocket == INVALID_SOCKET) {
@@ -92,14 +92,14 @@ public:
     }
 
 private:
-    Mode mode;
+    int mode;
     std::string address;
     int port;
     SOCKET serverSocket;  // Renomeado para evitar conflito
 };
 
 // Construtor e destruidor da classe NetworkManager
-NetworkManager::NetworkManager(Mode mode, const std::string& address, int port)
+NetworkManager::NetworkManager(int mode, const std::string& address, int port)
     : impl(new Impl(mode, address, port)) {}
 
 NetworkManager::~NetworkManager() {
