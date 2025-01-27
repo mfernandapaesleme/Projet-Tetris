@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+
+// Enumération des différents états du réseau
 enum class NetworkState {
     DISCONNECTED,
     CONNECTING,
@@ -12,39 +14,45 @@ enum class NetworkState {
     HOSTING
 };
 
+
+// Structure représentant un joueur ou une pièce dans le réseau
 struct NetworkPlayer {
     int id;
     int x, y; // Posição do jogador ou da peça
 };
 
+
+// Classe principale pour gérer les opérations réseau
 class NetworkManager {
 public:
     NetworkManager();
     ~NetworkManager();
 
+    // Initialisation et fermeture de la bibliothèque ENet
     bool initialize();
     void shutdown();
     bool isServer;
 
-    // Servidor
+    // Fonctions pour le serveur
     bool startServer(int port);
     void waitForClients();
     void broadcastPlayerState(const NetworkPlayer& player);
 
-    // Cliente
+    // Fonctions pour le client
     bool connectToServer(const std::string& address, int port);
     void sendPlayerState(const NetworkPlayer& player);
     std::vector<NetworkPlayer> receivePlayerStates();
 
-    // Mensagens   
+    // Envoi et réception de messages   
     void sendMessage(const std::string& message);
     std::string receiveMessage();
 
+    // Récupère l'état actuel du réseau
     NetworkState getState() const;
 
 private:
-    ENetHost* host;
-    ENetPeer* peer;
+    ENetHost* host;         // Hôte ENet (serveur ou client)
+    ENetPeer* peer;         // Pair ENet pour les connexions client-serveur
     NetworkState state;
 };
 

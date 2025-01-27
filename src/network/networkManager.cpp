@@ -1,12 +1,14 @@
 /* #include "networkManager.hpp"
 #include <iostream>
 
+// Constructeur de la classe NetworkManager qui initialise les membres
 NetworkManager::NetworkManager() : host(nullptr), peer(nullptr), state(NetworkState::DISCONNECTED) {}
 
 NetworkManager::~NetworkManager() {
     shutdown();
 }
 
+// Initialisation de la bibliothèque ENet
 bool NetworkManager::initialize() {
     if (enet_initialize() != 0) {
         std::cerr << "Failed to initialize ENet.\n";
@@ -15,11 +17,13 @@ bool NetworkManager::initialize() {
     return true;
 }
 
+// Fermeture et nettoyage des ressources
 void NetworkManager::shutdown() {
     if (host) enet_host_destroy(host);
     enet_deinitialize();
 }
 
+// Démarre un serveur ENet avec le port donné
 bool NetworkManager::startServer(int port) {
     ENetAddress address;
     address.host = ENET_HOST_ANY;
@@ -35,6 +39,8 @@ bool NetworkManager::startServer(int port) {
     return true;
 }
 
+
+// Attend les connexions des clients sur le serveur
 void NetworkManager::waitForClients() {
     if (!host) return;
 
@@ -46,6 +52,8 @@ void NetworkManager::waitForClients() {
     }
 }
 
+
+// Connexion à un serveur en utilisant l'adresse et le port donnés
 bool NetworkManager::connectToServer(const std::string& address, int port) {
     ENetAddress enetAddress;
     enet_address_set_host(&enetAddress, address.c_str());
@@ -67,6 +75,9 @@ bool NetworkManager::connectToServer(const std::string& address, int port) {
     return true;
 }
 
+
+
+// Diffuse l'état d'un joueur à tous les clients
 void NetworkManager::broadcastPlayerState(const NetworkPlayer& player) {
     if (!host) return;
 
@@ -75,6 +86,8 @@ void NetworkManager::broadcastPlayerState(const NetworkPlayer& player) {
     enet_host_flush(host);
 }
 
+
+// Envoie l'état du joueur à un client spécifique
 void NetworkManager::sendPlayerState(const NetworkPlayer& player) {
     if (!peer) return;
 
@@ -83,6 +96,8 @@ void NetworkManager::sendPlayerState(const NetworkPlayer& player) {
     enet_host_flush(host);
 }
 
+
+// Réception des états des joueurs à partir du serveur
 std::vector<NetworkPlayer> NetworkManager::receivePlayerStates() {
     std::vector<NetworkPlayer> players;
 
@@ -101,6 +116,7 @@ std::vector<NetworkPlayer> NetworkManager::receivePlayerStates() {
     return players;
 }
 
+// Retourne l'état actuel du réseau
 NetworkState NetworkManager::getState() const {
     return state;
 }
