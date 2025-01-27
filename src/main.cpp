@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 double lastUpdateTime = 0;
-bool EventTriggered(){
+bool EventTriggered(){                      // Fonction qui vérifie si un événement a été déclenché après 1 seconde
     double currentTime = GetTime();
 
     if ((currentTime - lastUpdateTime) >= 1){
@@ -20,16 +20,18 @@ bool EventTriggered(){
 int main() {
 
     const Color darkBlue = {44, 44, 127, 255};
-
+    // Initialisation de la fenêtre du jeu avec les dimensions spécifiées
     const int screenWidth = 500;
     const int screenHeight = 600;
     InitWindow(screenWidth, screenHeight, "Tetris Game");
     SetTargetFPS(60);
 
-    Game game;
-    Menu menu;
+    Game game;      // Crée une instance du jeu
+    Menu menu;      // Crée une instance du menu
     GameState currentState = GameState::MENU;
 
+
+    // Boucle principale du jeu
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(darkBlue);
@@ -81,6 +83,6 @@ int main() {
 
         EndDrawing();
     }
-    CloseWindow(); // Fechar a janela
+    CloseWindow(); // Ferme la fenêtre lorsque la boucle est terminée
     return 0;
 }
