@@ -1,4 +1,4 @@
-#include "network/networkManager.hpp"
+//#include "network/networkManager.hpp"
 #include <raylib.h>
 #include "game.h"
 #include "menu.h"
@@ -20,6 +20,13 @@ bool EventTriggered(){
 int main() {
 
     const Color darkBlue = {44, 44, 127, 255};
+
+   /*  NetworkManager server(0, "127.0.0.1", 12345);
+    server.start();
+
+    NetworkManager client(1, "127.0.0.1", 12345);
+    client.start(); */
+
 
     const int screenWidth = 500;
     const int screenHeight = 600;

@@ -13,7 +13,7 @@ Game::Game() {
   nextBlock = GetRandomBlock();
   gameOver = false;
   score = 0;
-  NetworkManager networkManager;
+  /* NetworkManager networkManager;
   
    if (isServer) {
     if (!networkManager.startServer(25564)) {
@@ -31,7 +31,7 @@ Game::Game() {
       //std::string serverMessage = networkManager.receiveMessage();
       std::cout << "Conectado ao servidor!" << std::endl;
     }
-  }
+  } */
 }
 
 Game::~Game()

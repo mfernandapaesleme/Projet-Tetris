@@ -1,106 +1,104 @@
-#include "networkManager.hpp"
+#include "networkmanager.hpp"
+#include <enet/enet.h>
 #include <iostream>
+#include <stdexcept>
 
-NetworkManager::NetworkManager() : host(nullptr), peer(nullptr), state(NetworkState::DISCONNECTED) {}
+class NetworkManager::Impl {
+public:
+    Impl(int mode, const std::string& address, int port)
+        : mode(mode), address(address), port(port), host(nullptr), peer(nullptr) {}
+
+    ~Impl() {
+        if (peer) enet_peer_disconnect(peer, 0);
+        if (host) enet_host_destroy(host);
+        enet_deinitialize();
+    }
+
+    void start() {
+        if (enet_initialize() != 0) {
+            throw std::runtime_error("Failed to initialize ENet.");
+        }
+
+        if (mode == 0) {
+            ENetAddress enetAddress;
+            enet_address_set_host(&enetAddress, address.c_str());
+            enetAddress.port = port;
+
+            host = enet_host_create(&enetAddress, 32, 2, 0, 0);
+            if (!host) {
+                throw std::runtime_error("Failed to create ENet server.");
+            }
+        } else if (mode == 1) {
+            host = enet_host_create(nullptr, 1, 2, 0, 0);
+            if (!host) {
+                throw std::runtime_error("Failed to create ENet client.");
+            }
+
+            ENetAddress enetAddress;
+            enet_address_set_host(&enetAddress, address.c_str());
+            enetAddress.port = port;
+
+            peer = enet_host_connect(host, &enetAddress, 2, 0);
+            if (!peer) {
+                throw std::runtime_error("Failed to create ENet peer.");
+            }
+        }
+    }
+
+    void send(const std::string& message) {
+        if (mode == 0) {
+            if (!host) throw std::runtime_error("Server not initialized.");
+        } else if (!peer) {
+            throw std::runtime_error("Client not connected to a server.");
+        }
+
+        ENetPacket* packet = enet_packet_create(message.c_str(),
+                                                message.size() + 1,
+                                                ENET_PACKET_FLAG_RELIABLE);
+        if (mode == 0) {
+            enet_host_broadcast(host, 0, packet);
+        } else {
+            enet_peer_send(peer, 0, packet);
+        }
+    }
+
+    std::string receive() {
+        if (!host) throw std::runtime_error("Host not initialized.");
+
+        ENetEvent event;
+        if (enet_host_service(host, &event, 1000) > 0) {
+            if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+                std::string receivedMessage(reinterpret_cast<char*>(event.packet->data));
+                enet_packet_destroy(event.packet);
+                return receivedMessage;
+            }
+        }
+        return {};
+    }
+
+private:
+    int mode;
+    std::string address;
+    int port;
+    ENetHost* host;
+    ENetPeer* peer;
+};
+
+NetworkManager::NetworkManager(int mode, const std::string& address, int port)
+    : impl(new Impl(mode, address, port)) {}
 
 NetworkManager::~NetworkManager() {
-    shutdown();
+    delete impl;
 }
 
-bool NetworkManager::initialize() {
-    if (enet_initialize() != 0) {
-        std::cerr << "Failed to initialize ENet.\n";
-        return false;
-    }
-    return true;
+void NetworkManager::start() {
+    impl->start();
 }
 
-void NetworkManager::shutdown() {
-    if (host) enet_host_destroy(host);
-    enet_deinitialize();
+void NetworkManager::send(const std::string& message) {
+    impl->send(message);
 }
 
-bool NetworkManager::startServer(int port) {
-    ENetAddress address;
-    address.host = ENET_HOST_ANY;
-    address.port = port;
-
-    host = enet_host_create(&address, 2, 2, 0, 0);
-    if (!host) {
-        std::cerr << "Failed to start server.\n";
-        return false;
-    }
-
-    state = NetworkState::HOSTING;
-    return true;
-}
-
-void NetworkManager::waitForClients() {
-    if (!host) return;
-
-    ENetEvent event;
-    while (enet_host_service(host, &event, 1000) > 0) {
-        if (event.type == ENET_EVENT_TYPE_CONNECT) {
-            std::cout << "Client connected.\n";
-        }
-    }
-}
-
-bool NetworkManager::connectToServer(const std::string& address, int port) {
-    ENetAddress enetAddress;
-    enet_address_set_host(&enetAddress, address.c_str());
-    enetAddress.port = port;
-
-    host = enet_host_create(nullptr, 1, 2, 0, 0);
-    if (!host) {
-        std::cerr << "Failed to create client host.\n";
-        return false;
-    }
-
-    peer = enet_host_connect(host, &enetAddress, 2, 0);
-    if (!peer) {
-        std::cerr << "Failed to connect to server.\n";
-        return false;
-    }
-
-    state = NetworkState::CONNECTING;
-    return true;
-}
-
-void NetworkManager::broadcastPlayerState(const NetworkPlayer& player) {
-    if (!host) return;
-
-    ENetPacket* packet = enet_packet_create(&player, sizeof(player), ENET_PACKET_FLAG_RELIABLE);
-    enet_host_broadcast(host, 0, packet);
-    enet_host_flush(host);
-}
-
-void NetworkManager::sendPlayerState(const NetworkPlayer& player) {
-    if (!peer) return;
-
-    ENetPacket* packet = enet_packet_create(&player, sizeof(player), ENET_PACKET_FLAG_RELIABLE);
-    enet_peer_send(peer, 0, packet);
-    enet_host_flush(host);
-}
-
-std::vector<NetworkPlayer> NetworkManager::receivePlayerStates() {
-    std::vector<NetworkPlayer> players;
-
-    if (!host) return players;
-
-    ENetEvent event;
-    while (enet_host_service(host, &event, 0) > 0) {
-        if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-            NetworkPlayer player;
-            memcpy(&player, event.packet->data, sizeof(player));
-            players.push_back(player);
-            enet_packet_destroy(event.packet);
-        }
-    }
-
-    return players;
-}
-
-NetworkState NetworkManager::getState() const {
-    return state;
+std::string NetworkManager::receive() {
+    return impl->receive();
 }

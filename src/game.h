@@ -1,5 +1,6 @@
 #pragma once
 #include "grid.h"
+#include "network/networkManager.hpp"
 #include "blocks.cpp"
 #include "raylib.h"
 
@@ -29,5 +30,4 @@ private:
   Block currentBlock;
   Block nextBlock;
   Grid grid;
-  NetworkManager networkManager;
 };
